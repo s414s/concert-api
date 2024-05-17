@@ -37,7 +37,7 @@ builder.Services.AddScoped<IRepository<Group>, GroupsRepository>();
 builder.Services.AddScoped<IRepository<Event>, EventsRepository>();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("LocalWebApiDatabase")));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
 var app = builder.Build();
 
