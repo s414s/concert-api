@@ -22,19 +22,11 @@ public class EventController : ControllerBase
 
 
     [HttpGet(Name = "GetAllEvents")] 
-    public ActionResult<IEnumerable<Application.DTOs.EventDTO>> GetAllEvents()
+    public async Task<ActionResult<IEnumerable<EventDTO>>> GetAllEventsAsync()
     {
-        if (!ModelState.IsValid)  {return BadRequest(ModelState); } 
-
         try 
         {
-            var events = _eventService.GetEvents();
-            
-                if (events == null || !events.Any())
-                    {
-                        return NotFound("No hay eventos disponibles.");
-                    }
-                    
+            var events = await _eventService.GetEvents();
             return Ok(events);
         }     
         catch (Exception ex)
@@ -74,7 +66,7 @@ public class EventController : ControllerBase
         try 
         {
             var ev = _eventService.CreateEvent(eventDto);
-            return CreatedAtAction(nameof(GetAllEvents), new { eventId = ev.Id }, ev);
+            return CreatedAtAction(nameof(GetAllEventsAsync), new { eventId = ev.Id }, ev);
         }     
         catch (Exception ex)
         {

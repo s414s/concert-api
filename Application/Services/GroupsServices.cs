@@ -1,10 +1,19 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Contracts;
+using Domain.Entities;
 
 namespace Application.Services;
 
 public class GroupsServices : IGroupServices
 {
+    private readonly IRepository<Group> _grouposRepository;
+
+    public GroupsServices(IRepository<Group> grouposRepository)
+    {
+        _grouposRepository = grouposRepository;
+    }
+
     public GroupDTO CreateGroup(GroupDTO newGroup)
     {
         throw new NotImplementedException();
@@ -20,9 +29,10 @@ public class GroupsServices : IGroupServices
         throw new NotImplementedException();
     }
 
-    public IEnumerable<GroupDTO> GetGroups()
+    public async Task<IEnumerable<GroupDTO>> GetGroups()
     {
-        throw new NotImplementedException();
+        var groups = await _grouposRepository.GetAll();
+        return groups.Select(x => GroupDTO.MapFromDomainEntity(x));
     }
 
     public GroupDTO UpdateGroup(GroupDTO updatedGroup)

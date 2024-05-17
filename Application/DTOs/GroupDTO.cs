@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Domain.Entities;
+using Domain.Enum;
 
 namespace Application.DTOs;
 
@@ -10,4 +11,16 @@ public class GroupDTO
     public DateTime CreatedOn { get; set; }
     public bool ExplicitContent { get; set; }
     public Genre Genre { get; set; }
+    public static GroupDTO MapFromDomainEntity(Group group)
+    {
+        return new GroupDTO
+        {
+            Id = group.Id,
+            Name = group.Name,
+            Password = group.Password,
+            CreatedOn = group.CreatedOn,
+            ExplicitContent = group.ExplicitContent,
+            Genre = group.Genre,
+        };
+    }
 }
