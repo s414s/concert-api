@@ -8,13 +8,13 @@ namespace WebApi.API.Controllers;
 [ApiController]
 [Route("[controller]")] 
 
-public class GroupsController : ControllerBase
+public class GroupController : ControllerBase
 {
-    private readonly ILogger<GroupsController> _logger;
+    private readonly ILogger<GroupController> _logger;
     private readonly IGroupServices _groupService;
 
 
-    public GroupsController(ILogger<GroupsController> logger, IGroupServices groupService)
+    public GroupController(ILogger<GroupController> logger, IGroupServices groupService)
     {
         _logger = logger;
         _groupService = groupService;

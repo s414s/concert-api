@@ -8,13 +8,13 @@ namespace WebApi.API.Controllers;
 [ApiController]
 [Route("[controller]")] 
 
-public class EventsController : ControllerBase
+public class EventController : ControllerBase
 {
-    private readonly ILogger<EventsController> _logger;
+    private readonly ILogger<EventController> _logger;
     private readonly IEventServices _eventService;
 
 
-    public EventsController(ILogger<EventsController> logger, IEventServices eventService)
+    public EventController(ILogger<EventController> logger, IEventServices eventService)
     {
         _logger = logger;
         _eventService = eventService;
