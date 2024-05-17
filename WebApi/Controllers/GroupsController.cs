@@ -22,19 +22,11 @@ public class GroupsController : ControllerBase
 
 
     [HttpGet(Name = "GetAllGroups")] 
-    public ActionResult<IEnumerable<Application.DTOs.GroupDTO>> GetGroups()
+    public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroups()
     {
-        if (!ModelState.IsValid)  {return BadRequest(ModelState); } 
-
         try 
         {
-            var groups = _groupService.GetGroups();
-            
-                if (groups == null || !groups.Any())
-                    {
-                        return NotFound("No hay grupos disponibles.");
-                    }
-                    
+            var groups = await _groupService.GetGroups();
             return Ok(groups);
         }     
         catch (Exception ex)

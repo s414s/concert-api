@@ -1,6 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Entities;
-using Infrastructure.Persistence.Context;
+using Infraestructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Implementations;
@@ -9,7 +9,7 @@ public class EventsRepository : IRepository<Event>
 {
     private readonly DatabaseContext _context;
 
-    public HotelsRepository(DatabaseContext context)
+    public EventsRepository(DatabaseContext context)
     {
         _context = context;
     }
@@ -18,7 +18,7 @@ public class EventsRepository : IRepository<Event>
 
     public async Task<bool> Add(Event entity)
     {
-        await _context.Hotels.AddAsync(entity);
+        await _context.Events.AddAsync(entity);
         return await SaveChanges();
     }
 
@@ -35,7 +35,10 @@ public class EventsRepository : IRepository<Event>
 
     public async Task<IEnumerable<Event>> GetAll()
     {
-        return await _context.Events.ToListAsync();
+        return await _context.Events
+            .Include(x => x.EventGroups)
+                .ThenInclude(x => x.Group)
+            .ToListAsync();
     }
 
     public async Task<Event> GetByID(long entityId)

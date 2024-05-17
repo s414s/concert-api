@@ -9,5 +9,6 @@ public interface IRepository<T> where T : Entity
     Task<bool> Add(T entity);
     Task<bool> Delete(long entityId);
     Task<bool> Update(T entity);
+    Task<IEnumerable<T>> GetAll();
     Task<bool> SaveChanges();
 }
