@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using Application.Contracts;
 using Application.DTOs;
 
@@ -31,79 +30,72 @@ public class GroupController : ControllerBase
         }     
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet("{groupId}", Name = "GetGroupById")]
-    public IActionResult GetGroupById(long groupId)
+    public async Task<IActionResult> GetGroupByIdAsync(long groupId)
     {
         try
         {
-            var group = _groupService.GetGroupById(groupId);
+            var group = await _groupService.GetGroupById(groupId);
             return Ok(group);
            
         }
-        catch (KeyNotFoundException)
+        catch (Exception ex)
         {
-            return NotFound($"No existe grupos con el Id {groupId}");
+            _logger.LogError(ex.Message);
+            return BadRequest(ex);
         }
     }
 
 
     [HttpPost]
-    public IActionResult NewGroup([FromBody] GroupDTO groupDto)
+    public async Task<IActionResult> NewGroupAsync([FromBody] GroupDTO groupDto)
     {
-        // Verificar si el modelo recibido es válido
-        if (!ModelState.IsValid){ return BadRequest(ModelState);}
-
-        if (string.IsNullOrEmpty(groupDto.Name) || string.IsNullOrEmpty(groupDto.Password))
-
-        {
-            return BadRequest("Los campos no pueden estar vacíos.");
-        }
-
         try 
         {
-            var group = _groupService.CreateGroup(groupDto);
-            return Ok("Grupo creado correctamente");
+            var newGroup = await _groupService.CreateGroup(groupDto);
+            return Ok(newGroup);
         }     
         catch (Exception ex)
         {
+           _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }
 
 
     [HttpPut("{groupId}")]
-    public IActionResult UpdateGroup(int groupId, [FromBody] GroupDTO groupDto)
+    public async Task<IActionResult> UpdateGroupAsync(int groupId, [FromBody] GroupDTO groupDto)
     {
-        if (!ModelState.IsValid)  {return BadRequest(ModelState); } 
-
         try
         {
-            _groupService.UpdateGroup(groupDto);
-            return Ok($"El grupo con Id: {groupId} ha sido actualizado correctamente");
+            await _groupService.UpdateGroup(groupDto);
+            return Ok();
         }
-        catch (KeyNotFoundException)
+        catch (Exception ex)
         {
-           return NotFound();
+           _logger.LogError(ex.Message);
+           return BadRequest(ex.Message);
         }
     }
 
 
     [HttpDelete("{groupId}")]
-    public IActionResult DeleteGroup(int groupId)
+    public async Task<IActionResult> DeleteGroupAsync(int groupId)
     {
         try
         {
-            _groupService.DeleteGroup(groupId);
-            return Ok($"El grupo con Id: {groupId} ha sido borrado correctamente");
+            await _groupService.DeleteGroup(groupId);
+            return Ok();
         }
-        catch (KeyNotFoundException ex)
+        catch (Exception ex)
         {
-            _logger.LogInformation(ex.Message);
-            return NotFound();
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using Application.Contracts;
 using Application.DTOs;
 
@@ -31,82 +30,74 @@ public class EventController : ControllerBase
         }     
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet("{eventId}", Name = "GetEventById")]
-    public IActionResult GetEventById(long eventId)
+    public async Task<IActionResult> GetEventByIdAsync(long eventId)
     {
         try
         {
-            var e = _eventService.GetEventById(eventId);
+            var e = await _eventService.GetEventById(eventId);
             return Ok(e);
            
         }
-        catch (KeyNotFoundException)
+        catch (Exception ex)
         {
-            return NotFound($"No existe eventos con el Id {eventId}");
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
 
     [HttpPost]
-    public IActionResult NewEvent([FromBody] EventDTO eventDto)
+    public async Task<IActionResult> NewEventAsync([FromBody] EventDTO eventDto)
     {
-        // Verificar si el modelo recibido es válido
-        if (!ModelState.IsValid){ return BadRequest(ModelState);}
-
-        if (string.IsNullOrEmpty(eventDto.Name) || string.IsNullOrEmpty(eventDto.ZipCode))
-
-        {
-            return BadRequest("Los campos no pueden estar vacíos.");
-        }
-
         try 
         {
-            var ev = _eventService.CreateEvent(eventDto);
-            return CreatedAtAction(nameof(GetAllEventsAsync), new { eventId = ev.Id }, ev);
+            var e = await _eventService.CreateEvent(eventDto);
+            return Ok(e);
         }     
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }
 
 
     [HttpPut("{eventId}")]
-    public IActionResult UpdateEvent(int eventId, [FromBody] EventDTO eventDto)
+    public async Task<IActionResult> UpdateEventAsync(long eventId, [FromBody] EventDTO eventDto)
     {
-        if (!ModelState.IsValid)  {return BadRequest(ModelState); } 
-
         try
         {
-            _eventService.UpdateEvent(eventId, eventDto);
-            return Ok($"El evento con Id: {eventId} ha sido actualizado correctamente");
+            await _eventService.UpdateEvent(eventId, eventDto);
+            return Ok();
         }
-        catch (KeyNotFoundException)
+        catch (Exception ex)
         {
-           return NotFound();
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
 
     [HttpDelete("{eventId}")]
-    public IActionResult DeleteEvent(int eventId)
+    public async Task<IActionResult> DeleteEventAsync(int eventId)
     {
         try
         {
-            _eventService.DeleteEvent(eventId);
-            return Ok($"El evento con Id: {eventId} ha sido borrado correctamente");
+            await _eventService.DeleteEvent(eventId);
+            return Ok();
         }
-        catch (KeyNotFoundException ex)
+        catch (Exception ex)
         {
-            _logger.LogInformation(ex.Message);
-            return NotFound();
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
-
 }
 
    

@@ -7,36 +7,49 @@ namespace Application.Services;
 
 public class GroupsServices : IGroupServices
 {
-    private readonly IRepository<Group> _grouposRepository;
+    private readonly IRepository<Group> _groupsRepository;
 
-    public GroupsServices(IRepository<Group> grouposRepository)
+    public GroupsServices(IRepository<Group> groupsRepository)
     {
-        _grouposRepository = grouposRepository;
+        _groupsRepository = groupsRepository;
     }
 
-    public GroupDTO CreateGroup(GroupDTO newGroup)
+    public async Task<GroupDTO> CreateGroup(GroupDTO newGroup)
     {
-        throw new NotImplementedException();
+        var isEntityCreated = await _groupsRepository.Add(GroupDTO.MapToDomainEntity(newGroup));
+        if (isEntityCreated)
+            return newGroup;
+
+        throw new ApplicationException("group could not be created");
     }
 
-    public bool DeleteGroup(long groupId)
+    public async Task<bool> DeleteGroup(long groupId)
     {
-        throw new NotImplementedException();
+        var entity = await _groupsRepository.GetByID(groupId) ?? throw new ApplicationException("group not found");
+        return await _groupsRepository.Delete(entity.Id);
     }
 
-    public GroupDTO GetGroupById(long eventId)
+    public async Task<GroupDTO> GetGroupById(long eventId)
     {
-        throw new NotImplementedException();
+        var entity = await _groupsRepository.GetByID(eventId) ?? throw new ApplicationException("group not found");
+        return GroupDTO.MapFromDomainEntity(entity);
     }
 
     public async Task<IEnumerable<GroupDTO>> GetGroups()
     {
-        var groups = await _grouposRepository.GetAll();
+        var groups = await _groupsRepository.GetAll();
         return groups.Select(x => GroupDTO.MapFromDomainEntity(x));
     }
 
-    public GroupDTO UpdateGroup(GroupDTO updatedGroup)
+    public async Task<GroupDTO> UpdateGroup(GroupDTO updatedGroup)
     {
-        throw new NotImplementedException();
+        if (await _groupsRepository.Update(GroupDTO.MapToDomainEntity(updatedGroup)))
+        {
+            return updatedGroup;
+        }
+        else
+        {
+            throw new ApplicationException("group could not be updated");
+        }
     }
 }

@@ -5,8 +5,8 @@ namespace Application.Contracts;
 public interface IGroupServices
 {
     Task<IEnumerable<GroupDTO>> GetGroups();
-    GroupDTO GetGroupById(long groupId);
-    GroupDTO CreateGroup(GroupDTO newGroup);
-    GroupDTO UpdateGroup(GroupDTO updatedGroup);
-    bool DeleteGroup(long groupId);
+    Task<GroupDTO> GetGroupById(long groupId);
+    Task<GroupDTO> CreateGroup(GroupDTO newGroup);
+    Task<GroupDTO> UpdateGroup(GroupDTO updatedGroup);
+    Task<bool> DeleteGroup(long groupId);
 }
