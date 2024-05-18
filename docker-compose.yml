@@ -1,0 +1,50 @@
+version: '3.4'
+ 
+networks:
+    concertconnect:
+
+services:
+    app_db: 
+        image: postgres:15
+        container_name: app_db
+        environment:
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=2209
+          - POSTGRES_DB=ConcertConnect
+        ports:
+          - "2000:5432"
+        restart: always
+        volumes:
+          - app_data:/var/lib/postgresql/data
+        networks:
+          - concertconnect
+    api-dev:
+        restart: unless-stopped 
+        ports:
+          - "5181:80"
+        build: 
+          context: .
+          dockerfile: Dockerfile
+        depends_on:
+          - app_db
+        environment:
+          - ASPNETCORE_HTTP_PORTS=80
+          - IS_DOCKER=true
+        networks:
+            - concertconnect
+    web:
+        image: rubenlcdocker/concertconnectapp:1.0
+        restart: unless-stopped 
+        ports:
+          - 7077:80
+        depends_on:
+          - api-dev
+        networks:
+          - concertconnect
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:80"]
+          interval: 30s
+          timeout: 10s
+          retries: 3
+volumes:
+    app_data: {}
