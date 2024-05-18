@@ -24,4 +24,17 @@ public class EventDTO
             Groups = e.EventGroups.Select(x => GroupDTO.MapFromDomainEntity(x.Group)).ToList()
         };
     }
+
+    public static Event MapToDomainEntity(EventDTO e)
+    {
+        return new Event
+        {
+            Id = e.Id,
+            Name = e.Name,
+            Capacity = e.Capacity,
+            Date = e.Date,
+            OnlyAdults = e.OnlyAdults,
+            ZipCode = e.ZipCode,
+        };
+    }
 }

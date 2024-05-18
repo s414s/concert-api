@@ -14,19 +14,25 @@ public class EventServices : IEventServices
         _eventsRepository = eventsRepository;
     }
 
-    public EventDTO CreateEvent(EventDTO newEvent)
+    public async Task<EventDTO> CreateEvent(EventDTO newEvent)
     {
-        throw new NotImplementedException();
+        var isEntityCreated = await _eventsRepository.Add(EventDTO.MapToDomainEntity(newEvent));
+        if (isEntityCreated)
+            return newEvent;
+
+        throw new ApplicationException("event could not be created");
     }
 
-    public bool DeleteEvent(long eventId)
+    public async Task<bool> DeleteEvent(long eventId)
     {
-        throw new NotImplementedException();
+        var entity = await _eventsRepository.GetByID(eventId) ?? throw new ApplicationException("event not found");
+        return await _eventsRepository.Delete(entity.Id);
     }
 
-    public EventDTO GetEventById(long eventId)
+    public async Task<EventDTO> GetEventById(long eventId)
     {
-        throw new NotImplementedException();
+        var entity = await _eventsRepository.GetByID(eventId) ?? throw new ApplicationException("event not found");
+        return EventDTO.MapFromDomainEntity(entity);
     }
 
     public async Task<IEnumerable<EventDTO>> GetEvents()
@@ -35,13 +41,15 @@ public class EventServices : IEventServices
         return entities.Select(x => EventDTO.MapFromDomainEntity(x));
     }
 
-    public EventDTO UpdateEvent(EventDTO newEventInfo)
+    public async Task<EventDTO> UpdateEvent(long eventId, EventDTO newEventInfo)
     {
-        throw new NotImplementedException();
-    }
-
-    public EventDTO UpdateEvent(long eventId, EventDTO newEventInfo)
-    {
-        throw new NotImplementedException();
+        if (await _eventsRepository.Update(EventDTO.MapToDomainEntity(newEventInfo)))
+        {
+            return newEventInfo;
+        }
+        else
+        {
+            throw new ApplicationException("entity could not be updated");
+        }
     }
 }
