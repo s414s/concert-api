@@ -5,6 +5,8 @@ using WebApi.API.Controllers;
 
 namespace WebApi.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<EventController> _logger;
@@ -16,7 +18,8 @@ public class AuthController : ControllerBase
         try
         {
             var groupId = await _authServices.Login(login.Name, login.Password);
-            return Ok(groupId);
+            var response = new { id = groupId };
+            return Ok(response);
         }
         catch (Exception ex)
         {

@@ -31,6 +31,7 @@ builder.Services.AddSwaggerGen();
 // Add services
 builder.Services.AddScoped<IEventServices, EventServices>();
 builder.Services.AddScoped<IGroupServices, GroupsServices>();
+builder.Services.AddScoped<IAuthServices, AuthServices>();
 
 // Add repos
 builder.Services.AddScoped<IRepository<Group>, GroupsRepository>();
