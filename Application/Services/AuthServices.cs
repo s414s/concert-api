@@ -12,13 +12,12 @@ public class AuthServices : IAuthServices
         _groupsRepository = groupsRepository;
     }
 
-    public async Task<bool> Login(string groupName, string password)
+    public async Task<long> Login(string groupName, string password)
     {
         var groups = await _groupsRepository.GetAll();
-        if (groups.Any(x => x.Name == groupName && x.Password == password))
-        {
-            return true;
-        }
+        var group = groups.FirstOrDefault(x => x.Name == groupName && x.Password == password);
+        if (group != null)
+            return group.Id;
 
         throw new ApplicationException("name or password incorrect");
     }

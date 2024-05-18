@@ -11,12 +11,12 @@ public class AuthController : ControllerBase
     private readonly IAuthServices _authServices;
 
     [HttpPost(Name = "Login")] 
-    public async Task<IActionResult> LoginAsync([FromBody] LoginDTO login)
+    public async Task<IActionResult> Login([FromBody] LoginDTO login)
     {
         try
         {
-            var isAuthCorrect = await _authServices.Login(login.Name, login.Password);
-            return Ok(isAuthCorrect);
+            var groupId = await _authServices.Login(login.Name, login.Password);
+            return Ok(groupId);
         }
         catch (Exception ex)
         {
