@@ -1,7 +1,6 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.API.Controllers;
 
 namespace WebApi.Controllers;
 
@@ -9,8 +8,12 @@ namespace WebApi.Controllers;
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly ILogger<EventController> _logger;
     private readonly IAuthServices _authServices;
+
+    public AuthController(IAuthServices authServices)
+    {
+        _authServices = authServices;
+    }
 
     [HttpPost(Name = "Login")] 
     public async Task<IActionResult> Login([FromBody] LoginDTO login)
@@ -23,7 +26,6 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }

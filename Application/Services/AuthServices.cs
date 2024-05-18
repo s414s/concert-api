@@ -15,7 +15,7 @@ public class AuthServices : IAuthServices
     public async Task<long> Login(string groupName, string password)
     {
         var groups = await _groupsRepository.GetAll();
-        var group = groups.FirstOrDefault(x => x.Name == groupName && x.Password == password);
+        var group = groups?.FirstOrDefault(x => x.Name == groupName && x.Password == password);
         if (group != null)
             return group.Id;
 
